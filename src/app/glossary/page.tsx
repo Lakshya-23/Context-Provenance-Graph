@@ -53,7 +53,7 @@ export default function GlossaryPage() {
             Governed Context Glossary
           </h1>
           <p className="text-sm text-muted-foreground mt-2 max-w-2xl leading-relaxed">
-            All enterprise concepts extracted by the LangGraph pipeline, complete with business rules,
+            All enterprise concepts extracted ,complete with business rules,
             recognized aliases, confidence ratings, and verbatim PDF citations.
           </p>
         </div>

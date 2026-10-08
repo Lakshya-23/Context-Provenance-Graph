@@ -84,10 +84,6 @@ export function ImpactSummary({ impact }: ImpactSummaryProps) {
               </CardDescription>
             </div>
           </div>
-
-          <Badge variant="outline" className="font-mono text-xs hidden sm:inline-flex bg-background">
-            BFS Graph Traversal
-          </Badge>
         </CardContent>
       </Card>
 

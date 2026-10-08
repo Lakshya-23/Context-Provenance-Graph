@@ -103,7 +103,7 @@ export default function OverviewPage() {
           </div>
           <div>
             <h3 className="text-base font-bold text-foreground">
-              Executing LangGraph Pipeline...
+              Executing Pipeline...
             </h3>
             <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
               Parsing Revenue Recognition Policy PDF, extracting verified claims with LiteLLM,
