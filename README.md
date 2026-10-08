@@ -128,7 +128,7 @@ npm run dev
 4. **Semantic Impact Analysis (`/impact`)**:
    - Version evolution simulator (v1.2 base vs v1.3 revision).
    - LLM semantic diff explaining the rationale behind policy changes (e.g. pre-settlement refund deductions).
-   - Deterministic BFS graph traversal grouping all impacted downstream metrics, pipelines, agents, and test cases.
+   - Deterministic grouping all impacted downstream metrics, pipelines, agents, and test cases.
 
 5. **Deterministic Evaluators (`/evaluations`)**:
    - In-process evaluation benchmarks:
