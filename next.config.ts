@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {
@@ -11,6 +10,21 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  // Ensure no /backend routes are accessible via browser
+  async redirects() {
+    return [
+      {
+        source: "/backend",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/backend/:path*",
+        destination: "/",
+        permanent: false,
+      },
+    ];
   },
 };
 
