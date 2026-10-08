@@ -46,8 +46,8 @@ Revenue_Policy.pdf
 
 - **Frontend**: Next.js 16 (App Router), React 19, TypeScript, `@xyflow/react` (React Flow), Tailwind CSS v4, Lucide Icons.
 - **Backend**: Python 3.12, FastAPI, LangGraph, LiteLLM, PyMuPDF (`pymupdf`), Pydantic v2.
-- **Supported LLM Providers**: Groq (`groq/llama-3.3-70b-versatile`), Google Gemini (`gemini/gemini-2.0-flash`), OpenAI, Anthropic, or any LiteLLM-compatible model.
-- **Security & Hosting**: Designed for Vercel (Frontend) and Render (Backend). Browser access to `/backend` is blocked via strict redirect rules in `next.config.ts`.
+- **Supported LLM Providers**: Groq, Google Gemini, OpenAI, Anthropic, or any LiteLLM-compatible model.
+- **Security & Hosting**: Designed for Vercel (Frontend) and Render (Backend).
 
 ---
 
@@ -62,8 +62,8 @@ cp .env.example .env
 Edit `.env` with your preferred settings:
 
 ```env
-# --- Model Selection (LiteLLM format) ---
-# Option 1: Groq (Recommended - ultra-fast)
+# --- Model Selection ---
+# Option 1: Groq 
 LLM_MODEL=groq/llama-3.3-70b-versatile
 GROQ_API_KEY=gsk_your_groq_api_key_here
 
@@ -86,8 +86,6 @@ ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 ---
 
 ## Running Locally
-
-You will need **two terminal windows**:
 
 ### Terminal 1: Backend Service (FastAPI)
 
