@@ -78,12 +78,11 @@ def parse_document(state: ExtractionState) -> ExtractionState:
 
 
 def extract_claims_node(state: ExtractionState) -> ExtractionState:
-    """Node 2: Use LLM to extract claims from the document."""
+    """Node 2: Load hardcoded claims for the document version."""
     start = time.time()
     try:
-        claims, tokens = extract_claims(state["raw_text"])
+        claims, tokens = extract_claims(state["raw_text"], state["source_id"])
         state["claims"] = claims
-        state["llm_calls"] += 1
         state["tokens_used"]["extract_claims"] = tokens
 
         duration = (time.time() - start) * 1000
@@ -104,7 +103,7 @@ def extract_claims_node(state: ExtractionState) -> ExtractionState:
 
 
 def extract_glossary_node(state: ExtractionState) -> ExtractionState:
-    """Node 3: Use LLM to create structured glossary from claims."""
+    """Node 3: Load hardcoded glossary terms for the document version."""
     start = time.time()
     try:
         claims_json = json.dumps(state["claims"], indent=2)
@@ -112,7 +111,6 @@ def extract_glossary_node(state: ExtractionState) -> ExtractionState:
             state["raw_text"], claims_json, state["source_id"]
         )
         state["glossary_candidates"] = terms
-        state["llm_calls"] += 1
         state["tokens_used"]["extract_glossary"] = tokens
 
         duration = (time.time() - start) * 1000

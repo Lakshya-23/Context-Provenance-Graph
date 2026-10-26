@@ -6,7 +6,7 @@ No external service required — pure code checks.
 from __future__ import annotations
 
 
-# Expected terms for the Revenue Policy document
+# Expected terms for the Revenue Policy document (all 9 governed terms)
 EXPECTED_TERMS = [
     "Revenue",
     "Refund",
@@ -15,6 +15,8 @@ EXPECTED_TERMS = [
     "Gross Revenue",
     "Net Revenue",
     "Realized Revenue",
+    "Fulfilled Order",
+    "Recognition Event",
 ]
 
 # Key business rules that should be captured
@@ -23,6 +25,8 @@ EXPECTED_BUSINESS_RULES = [
     "refunds processed before settlement are excluded from recognized revenue",
     "chargeback",  # partial match for chargeback rules
     "fulfilled order",  # recognition event
+    "gross revenue represents the value of fulfilled orders before refund adjustments",
+    "net revenue represents gross revenue less applicable refunds",
 ]
 
 

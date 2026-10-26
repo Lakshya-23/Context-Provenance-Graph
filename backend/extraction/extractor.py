@@ -1,87 +1,58 @@
-"""Extraction logic for claims and glossary terms.
+"""Deterministic extraction — no LLM calls.
 
-Calls the LLM through the llm.py wrapper and parses structured responses.
+Returns hardcoded claims and glossary terms from demo/hardcoded_data.py.
+The function signatures are identical to the original so workflow/nodes.py
+requires no changes.
 """
 
 from __future__ import annotations
 
-import json
-import re
-from pydantic import BaseModel
+import copy
 
-from workflow.llm import call_llm
-from workflow.prompts import (
-    SYSTEM_EXTRACTOR,
-    EXTRACT_CLAIMS_PROMPT,
-    EXTRACT_GLOSSARY_PROMPT,
-)
-from api.schemas import Claim, GlossaryTerm
 
-class ClaimsExtractionResponse(BaseModel):
-    claims: list[Claim]
+def _get_version_label(source_id: str) -> str:
+    """Extract version string from source_id like 'doc_revenue_policy_v1_2'."""
+    if "v1_3" in source_id:
+        return "1.3"
+    return "1.2"
 
-class GlossaryExtractionResponse(BaseModel):
-    terms: list[GlossaryTerm]
 
-def extract_claims(document_text: str) -> tuple[list[dict], dict]:
-    """Extract claims from document text using the LLM.
+def extract_claims(document_text: str, source_id: str = "") -> tuple[list[dict], dict]:
+    """Return hardcoded claims for the appropriate policy version.
+
+    Args:
+        document_text: Ignored — kept for API compatibility with nodes.py.
+        source_id: Used to select v1.2 or v1.3 dataset.
 
     Returns:
         (claims_list, token_usage)
     """
-    prompt = EXTRACT_CLAIMS_PROMPT.format(document_text=document_text)
+    from demo.hardcoded_data import HARDCODED_CLAIMS_V1_2, HARDCODED_CLAIMS_V1_3
 
-    result = call_llm(
-        prompt=prompt,
-        system=SYSTEM_EXTRACTOR,
-        temperature=0.1,
-        response_format=ClaimsExtractionResponse,
-    )
+    version = _get_version_label(source_id)
+    claims = copy.deepcopy(HARDCODED_CLAIMS_V1_3 if version == "1.3" else HARDCODED_CLAIMS_V1_2)
 
-    content = result["content"]
-    # litellm returns a json string if response_format is a pydantic model
-    # clean it up just in case the provider wrapped it in markdown
-    cleaned = re.sub(r"```(?:json)?\s*", "", content).strip().rstrip("`")
-    parsed = ClaimsExtractionResponse.model_validate_json(cleaned)
-    claims = [c.model_dump() for c in parsed.claims]
-
-    tokens = {
-        "prompt_tokens": result["prompt_tokens"],
-        "completion_tokens": result["completion_tokens"],
-    }
-
+    tokens = {"prompt_tokens": 0, "completion_tokens": 0}
     return claims, tokens
 
 
 def extract_glossary(
     document_text: str, claims_json: str, source_id: str
 ) -> tuple[list[dict], dict]:
-    """Extract structured glossary terms from document and claims.
+    """Return hardcoded glossary terms for the appropriate policy version.
+
+    Args:
+        document_text: Ignored — kept for API compatibility with nodes.py.
+        claims_json: Ignored — kept for API compatibility with nodes.py.
+        source_id: Used to select v1.2 or v1.3 dataset.
 
     Returns:
         (terms_list, token_usage)
     """
-    prompt = EXTRACT_GLOSSARY_PROMPT.format(
-        document_text=document_text,
-        claims_json=claims_json,
-        source_id=source_id,
-    )
+    from demo.hardcoded_data import HARDCODED_GLOSSARY_V1_2, HARDCODED_GLOSSARY_V1_3
 
-    result = call_llm(
-        prompt=prompt,
-        system=SYSTEM_EXTRACTOR,
-        temperature=0.1,
-        response_format=GlossaryExtractionResponse,
-    )
+    version = _get_version_label(source_id)
+    terms = copy.deepcopy(HARDCODED_GLOSSARY_V1_3 if version == "1.3" else HARDCODED_GLOSSARY_V1_2)
 
-    content = result["content"]
-    cleaned = re.sub(r"```(?:json)?\s*", "", content).strip().rstrip("`")
-    parsed = GlossaryExtractionResponse.model_validate_json(cleaned)
-    terms = [t.model_dump() for t in parsed.terms]
-
-    tokens = {
-        "prompt_tokens": result["prompt_tokens"],
-        "completion_tokens": result["completion_tokens"],
-    }
-
+    tokens = {"prompt_tokens": 0, "completion_tokens": 0}
     return terms, tokens

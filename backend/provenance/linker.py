@@ -58,6 +58,7 @@ CANONICAL_TERMS = {
     "net revenue": "term_net_revenue",
     "realized revenue": "term_realized_revenue",
     "fulfilled order": "term_fulfilled_order",
+    "recognition event": "term_recognition_event",
 }
 
 

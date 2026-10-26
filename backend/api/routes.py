@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import sys
+import time
 from fastapi import APIRouter, HTTPException
 
 from api.schemas import (
@@ -37,26 +38,26 @@ def health_check():
     return {
         "status": "ok",
         "service": "context-provenance-graph-backend",
-        "llm_model": os.getenv("LLM_MODEL", "not_configured"),
+        "llm_model": "hardcoded (no LLM)",
     }
 
 
 @router.get("/verify-llm")
 def verify_llm_endpoint():
-    """Perform a pre-flight test call to verify that the LLM model and API key are responding."""
-    from workflow.llm import verify_llm_connection
-    try:
-        return verify_llm_connection()
-    except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail=str(e),
-        )
+    """Stub — returns a mocked OK response without making any LLM call."""
+    return {
+        "status": "ok",
+        "model": "hardcoded (no LLM)",
+        "response": "OK",
+    }
 
 
 @router.post("/analyze", response_model=AnalysisResult)
 def analyze_document(request: AnalyzeRequest):
     """Run extraction pipeline on the specified Revenue Policy version."""
+    # Simulate pipeline latency so the frontend spinner displays for ~3 seconds
+    time.sleep(3)
+
     v_clean = request.version.strip()
     v_label = v_clean.replace(".", "_")
     source_id = f"doc_revenue_policy_v{v_label}"
@@ -72,18 +73,8 @@ def analyze_document(request: AnalyzeRequest):
             detail=f"Document version '{request.version}' not found ({pdf_filename})",
         )
 
-    # Pre-flight check: verify API key and model connectivity before running pipeline
     try:
-        from workflow.llm import verify_llm_connection
-        verify_llm_connection()
-    except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Pre-flight LLM API check failed: {str(e)}",
-        )
-
-    try:
-        # Run LangGraph extraction pipeline
+        # Run LangGraph extraction pipeline (now fully deterministic)
         state = run_extraction(source_id=source_id, source_version=v_clean)
     except Exception as e:
         raise HTTPException(
@@ -153,6 +144,9 @@ def analyze_document(request: AnalyzeRequest):
 @router.post("/impact", response_model=ImpactResult)
 def analyze_impact(request: ImpactRequest):
     """Detect changes between base and new versions, and trace downstream impact."""
+    # Simulate analysis latency so the frontend spinner displays for ~2 seconds
+    time.sleep(2)
+
     # Reconstruct provenance graph
     try:
         graph = ProvenanceGraph.model_validate(request.graph)
@@ -204,6 +198,9 @@ def analyze_impact(request: ImpactRequest):
 @router.post("/evaluate", response_model=EvaluationResult)
 def evaluate_extraction(request: EvaluateRequest):
     """Run in-process deterministic evaluators on the extracted glossary."""
+    # Simulate evaluation latency so the frontend spinner displays for ~2 seconds
+    time.sleep(2)
+
     glossary_dicts = [t.model_dump() for t in request.glossary]
     eval_results = run_all_evaluations(glossary_dicts, request.source_text)
     return EvaluationResult(**eval_results)
