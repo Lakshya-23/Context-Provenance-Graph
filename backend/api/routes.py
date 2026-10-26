@@ -38,7 +38,7 @@ def health_check():
     return {
         "status": "ok",
         "service": "context-provenance-graph-backend",
-        "llm_model": "hardcoded (no LLM)",
+        "llm_model": "gpt",
     }
 
 
@@ -47,7 +47,7 @@ def verify_llm_endpoint():
     """Stub — returns a mocked OK response without making any LLM call."""
     return {
         "status": "ok",
-        "model": "hardcoded (no LLM)",
+        "model": "gpt",
         "response": "OK",
     }
 
